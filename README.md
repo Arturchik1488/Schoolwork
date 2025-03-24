@@ -1,3 +1,6 @@
+Patstāvīgais grupu darbs programmēšanā
+Grupas dalībnieki: Artūrs Bergmanis, Rihards Akermanis, Daniels Vičmanis, Markuss Raivo Rebinka.
+
 Šī ir Flask bāzēta tīmekļa aplikācija, kas nodrošina lietotāju autentifikāciju un piekļuves kontroli, balstoties uz lomām. Kods ir strukturēts moduļos, dalot funkcionalitāti specifiskos failos.
 
 Pamata faili un to funkcijas:
