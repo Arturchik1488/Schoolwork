@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard - User Authentication System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card bg-dark mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="profile-info bg-dark border border-secondary rounded">
+                        <h4 class="text-primary"><i class="fas fa-user-circle me-2"></i>User Profile</h4>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Username:</strong> {{ user.username }}</p>
+                                <p><strong>Email:</strong> {{ user.email }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Role:</strong> 
+                                    {% if is_admin %}
+                                        <span class="badge bg-danger">Admin</span>
+                                    {% else %}
+                                        <span class="badge bg-info">User</span>
+                                    {% endif %}
+                                </p>
+                                <p><strong>Account ID:</strong> {{ user.id }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if is_admin %}
+                    <div class="admin-section mt-4">
+                        <h4 class="text-danger"><i class="fas fa-shield-alt me-2"></i>Admin Panel</h4>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card bg-dark border border-danger mb-3">
+                                    <div class="card-header bg-danger text-white">
+                                        User Management
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">As an administrator, you have access to manage all users in the system.</p>
+                                        <h5 class="card-title">Registered Users</h5>
+                                        <div class="table-responsive">
+                                            <table class="table table-dark table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Username</th>
+                                                        <th>Email</th>
+                                                        <th>Role</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- This would typically be populated from a database query -->
+                                                    <tr>
+                                                        <td>{{ user.id }}</td>
+                                                        <td>{{ user.username }}</td>
+                                                        <td>{{ user.email }}</td>
+                                                        <td>
+                                                            <span class="badge bg-danger">Admin</span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="user-section mt-4">
+                        <h4 class="text-info"><i class="fas fa-tasks me-2"></i>User Dashboard</h4>
+                        <hr>
+                        <div class="alert alert-info">
+                            <h5><i class="fas fa-info-circle me-2"></i>Welcome to your dashboard!</h5>
+                            <p>This is your personal dashboard where you can view and manage your account information.</p>
+                        </div>
+                        
+                        <div class="card bg-dark border border-info mt-3">
+                            <div class="card-header bg-info text-white">
+                                Account Information
+                            </div>
+                            <div class="card-body">
+                                <p>Your account was successfully set up and you are currently logged in with standard user permissions.</p>
+                                <p>Need administrative access? Contact the system administrator.</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

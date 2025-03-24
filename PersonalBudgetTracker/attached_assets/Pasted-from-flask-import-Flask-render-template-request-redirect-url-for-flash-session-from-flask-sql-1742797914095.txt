@@ -1,0 +1,77 @@
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField
+from wtforms.validators import DataRequired, Length, EqualTo, Email
+
+# Inicializē Flask aplikāciju un datubāzi
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SECRET_KEY'] = 'secret_key'  # Būtiska sesiju aizsardzībai
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+
+# Lietotāja datubāzes tabula
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(120), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+    role = db.Column(db.String(10), nullable=False, default="user")  # "admin" vai "user"
+
+# Reģistrēšanās forma
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=120)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+
+# Pieteikšanās forma
+class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+
+# Reģistrēšanās skats
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password, role="user")
+        db.session.add(user)
+        db.session.commit()
+        flash('Account created!', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form)
+
+# Pieteikšanās skats
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            session['user_id'] = user.id
+            session['role'] = user.role
+            flash('Login successful', 'success')
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Login failed. Check email and/or password', 'danger')
+    return render_template('login.html', form=form)
+
+# Admin un parastā lietotāja skats
+@app.route("/dashboard")
+def dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    if user.role == 'admin':
+        return render_template('dashboard.html', user=user, is_admin=True)
+    return render_template('dashboard.html', user=user, is_admin=False)
+
+# Startē Flask lietotni
+if __name__ == "__main__":
+    db.create_all()  # Izveido tabulas datubāzē
+    app.run(debug=True)
