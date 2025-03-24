@@ -96,3 +96,8 @@ Saista visus tīkla interfeisus (0.0.0.0) uz 5000. portu
 Ietver vides mainīgo integrāciju datu bāzes savienojumam
 
 Šī ir visaptveroša, bet modulāra autentifikācijas sistēma, kas var kalpot kā pamats lielākām aplikācijām, kas prasa lietotāju pārvaldību un piekļuves kontroli.
+
+Admina pieslēgšanās dati:
+Username - Admin
+Email - admin@example.com
+Password - adminpass123
